@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학교 타이머</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .timer-container {
+            margin-top: 100px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #333;
+        }
+
+        .timer-display {
+            font-size: 3em;
+            margin: 20px 0;
+            color: #0078d7;
+        }
+
+        .timer-buttons button {
+            font-size: 1.2em;
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #0078d7;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .timer-buttons button:hover {
+            background-color: #005a9e;
+        }
+
+        .timer-input {
+            margin: 20px 0;
+        }
+
+        .timer-input input {
+            font-size: 1.2em;
+            padding: 5px;
+            width: 60px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 80%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #0078d7;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <h1>학교 타이머</h1>
+        <div class="timer-input">
+            <label for="minuteInput">분: </label>
+            <input type="number" id="minuteInput" min="0" placeholder="분">
+            <label for="secondInput">초: </label>
+            <input type="number" id="secondInput" min="0" placeholder="초">
+        </div>
+        <div id="display" class="timer-display">00:00</div>
+        <div class="progress-bar">
+            <div id="progressBarFill" class="progress-bar-fill"></div>
+        </div>
+        <div class="timer-buttons">
+            <button id="start">시작</button>
+            <button id="stop">정지</button>
+            <button id="reset">초기화</button>
+        </div>
+    </div>
+    <script>
+        let timerInterval;
+        let time = 0;
+        let totalTime = 0;
+
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+        const resetButton = document.getElementById('reset');
+        const display = document.getElementById('display');
+        const minuteInput = document.getElementById('minuteInput');
+        const secondInput = document.getElementById('secondInput');
+        const progressBarFill = document.getElementById('progressBarFill');
+
+        function updateDisplay() {
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            display.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function updateProgressBar() {
+            const progress = totalTime > 0 ? (time / totalTime) * 100 : 0;
+            progressBarFill.style.width = `${progress}%`;
+        }
+
+        function startTimer() {
+            if (!timerInterval) {
+                if (time === 0) {
+                    const minutes = parseInt(minuteInput.value, 10) || 0;
+                    const seconds = parseInt(secondInput.value, 10) || 0;
+                    time = minutes * 60 + seconds;
+                    totalTime = time;
+                }
+                timerInterval = setInterval(() => {
+                    if (time > 0) {
+                        time--;
+                        updateDisplay();
+                        updateProgressBar();
+                    } else {
+                        stopTimer();
+                        alert('타이머가 종료되었습니다!');
+                    }
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            time = 0;
+            totalTime = 0;
+            updateDisplay();
+            updateProgressBar();
+            minuteInput.value = '';
+            secondInput.value = '';
+        }
+
+        startButton.addEventListener('click', startTimer);
+        stopButton.addEventListener('click', stopTimer);
+        resetButton.addEventListener('click', resetTimer);
+    </script>
+</body>
+</html>
